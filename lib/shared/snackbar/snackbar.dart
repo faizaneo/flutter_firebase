@@ -8,7 +8,7 @@ showSnackBar(BuildContext? context, message, color) {
         borderRadius: BorderRadius.circular(24),
       ),
       dismissDirection: DismissDirection.none,
-      margin: EdgeInsets.only(bottom: MediaQuery.of(context!).size.height / 1.35, right: 20, left: 20),
+      margin: EdgeInsets.only(bottom: MediaQuery.of(context!).size.height / 1.2, right: 20, left: 20),
       backgroundColor: color,
       content: Text(
         message,

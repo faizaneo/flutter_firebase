@@ -60,7 +60,7 @@ class CatsPreLoader extends StatelessWidget {
             ]),
           ),
         ),
-        bottomNavigationBar: BottomNavigation(
+        bottomSheet: BottomNavigation(
           currentIndex: 0,
         ));
   }

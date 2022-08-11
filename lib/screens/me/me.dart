@@ -1,12 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'package:cat_app/screens/cats/cats.dart';
-import 'package:cat_app/services/internet_checker_service/global_context_service.dart';
+import 'package:cat_app/model/cat_model.dart';
 import 'package:cat_app/services/internet_checker_service/internet_checker_service.dart';
 import 'package:cat_app/shared/bottom_navigation/bottom_navigation_bar.dart';
 import 'package:cat_app/shared/consts/consts.dart';
 import 'package:cat_app/widgets/add_remove_button.dart';
-import 'package:cat_app/widgets/custom_list_tile.dart';
+import 'package:cat_app/widgets/cat_list_tile.dart';
 import 'package:flutter/material.dart';
 
 class Me extends StatefulWidget {
@@ -16,11 +15,15 @@ class Me extends StatefulWidget {
   State<Me> createState() => _MeState();
 }
 
+//List fav cats
+List<Cat> favCats = [];
+
 class _MeState extends State<Me> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    final ScrollController controller = ScrollController();
     return Scaffold(
         body: SingleChildScrollView(
           child: Container(
@@ -76,16 +79,22 @@ class _MeState extends State<Me> {
                 child: Text('My cats', style: headlineTextStyle),
               ),
               if (favCats.isNotEmpty) ...[
-                for (int i = 0; i < favCats.length; i++) ...[
-                  CustomListTile(
-                      name: favCats[i]['Name'],
-                      description: favCats[i]['description'],
+                ListView.builder(
+                  shrinkWrap: true,
+                  controller: controller,
+                  itemCount: favCats.length,
+                  itemBuilder: (context, index) {
+                    return CatListTile(
+                      name: favCats[index].name,
+                      description: favCats[index].description,
                       addRemoveButton: AddRemoveButton(
-                        index: i,
+                        index: index,
                         catsDocuments: favCats,
-                        state: setState,
-                      ))
-                ]
+                        setState: setState,
+                      ),
+                    );
+                  },
+                )
               ] else ...[
                 Container(
                   height: height / 2,
@@ -105,7 +114,7 @@ class _MeState extends State<Me> {
             ]),
           ),
         ),
-        bottomNavigationBar: BottomNavigation(
+        bottomSheet: BottomNavigation(
           currentIndex: 1,
         ));
   }

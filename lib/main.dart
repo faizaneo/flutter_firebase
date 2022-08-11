@@ -9,14 +9,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await internetConnectionChecker(InternetConnectionChecker());
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  final GlobalKey<NavigatorState> navigation = NavigationService.navigatorKey;
+
   MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -31,10 +33,12 @@ class MyApp extends StatelessWidget {
               child: Center(child: CircularProgressIndicator()),
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
+            internetConnectionChecker(InternetConnectionChecker());
             return MaterialApp(
-              navigatorKey: NavigationService.navigatorKey,
+              navigatorKey: navigation,
               title: 'Cat App',
               theme: ThemeData(
+                bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.transparent),
                 primarySwatch: Colors.blue,
               ),
               debugShowCheckedModeBanner: false,

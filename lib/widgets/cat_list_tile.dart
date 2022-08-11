@@ -1,17 +1,23 @@
 import 'package:cat_app/shared/consts/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
-class CustomListTile extends StatefulWidget {
-  String name;
-  String description;
-  Widget addRemoveButton;
-  CustomListTile({Key? key, required this.name, required this.description, required this.addRemoveButton}) : super(key: key);
+class CatListTile extends StatefulWidget {
+  final String name;
+  final String description;
+  final Widget addRemoveButton;
+  CatListTile({
+    Key? key,
+    required this.name,
+    required this.description,
+    required this.addRemoveButton,
+  }) : super(key: key);
 
   @override
-  State<CustomListTile> createState() => _CustomListTileState();
+  State<CatListTile> createState() => _CatListTileState();
 }
 
-class _CustomListTileState extends State<CustomListTile> {
+class _CatListTileState extends State<CatListTile> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;

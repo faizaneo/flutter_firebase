@@ -40,7 +40,7 @@ class MePreLoader extends StatelessWidget {
             ]),
           ),
         ),
-        bottomNavigationBar: BottomNavigation(
+        bottomSheet: BottomNavigation(
           currentIndex: 0,
         ));
   }
