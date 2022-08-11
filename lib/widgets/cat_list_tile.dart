@@ -6,12 +6,9 @@ class CatListTile extends StatefulWidget {
   final String name;
   final String description;
   final Widget addRemoveButton;
-  CatListTile({
-    Key? key,
-    required this.name,
-    required this.description,
-    required this.addRemoveButton,
-  }) : super(key: key);
+  final String imagePath;
+  CatListTile({Key? key, required this.name, required this.description, required this.addRemoveButton, required this.imagePath})
+      : super(key: key);
 
   @override
   State<CatListTile> createState() => _CatListTileState();
@@ -24,12 +21,12 @@ class _CatListTileState extends State<CatListTile> {
     double width = MediaQuery.of(context).size.width;
     return Container(
         margin: EdgeInsets.only(top: 20),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), border: Border.all(color: Color(0xffE0E0E0))),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(19), border: Border.all(color: Color(0xffE0E0E0))),
         height: height / 7.3,
         child: Row(
           children: [
-            Image.asset(
-              'assets/pngs/cat.png',
+            Image.network(
+              widget.imagePath,
               height: height / 7.3,
               width: height / 7.3,
               fit: BoxFit.cover,

@@ -1,36 +1,40 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:developer';
+
+import 'package:cat_app/model/cat_model.dart';
 import 'package:cat_app/screens/cats/cats.dart';
 import 'package:cat_app/screens/me/me.dart';
+import 'package:cat_app/services/firebase_service/firebase_service.dart';
 import 'package:cat_app/services/internet_checker_service/global_context_service.dart';
 import 'package:cat_app/shared/consts/consts.dart';
 import 'package:cat_app/widgets/decorators/button_decorator.dart';
 import 'package:flutter/material.dart';
 
 class AddRemoveButton extends StatelessWidget {
-  final int index;
-  final List catsDocuments;
+  Cat selectedCat;
   final StateSetter setState;
   AddRemoveButton({
-    required this.index,
-    required this.catsDocuments,
+    required this.selectedCat,
     required this.setState,
   });
 
   @override
   build(BuildContext context) {
+    bool loader = false;
+    FirebaseService service = FirebaseService();
+    // print(selectedCat.isFavourite.toString());
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return favCats.any((element) => element.id == catsDocuments[index].id)
+    return selectedCat.isFavourite
         ? InkWell(
             onTap: () {
-              catsDocuments == favCats
-                  ? setState(() {
-                      catsDocuments.remove(catsDocuments[index]);
-                    })
-                  : setState(() {
-                      favCats.remove(favCats.firstWhere((element) => element.id == catsDocuments[index].id));
-                    });
+              selectedCat.isFavourite = false;
+
+              service.updateCat(selectedCat, setState);
+              setState(() {
+                loader = true;
+              });
             },
             child: Container(
               height: height / 22,
@@ -45,11 +49,12 @@ class AddRemoveButton extends StatelessWidget {
           )
         : InkWell(
             onTap: () {
-              if (!favCats.any((element) => element.id == catsDocuments[index].id)) {
-                setState(() {
-                  favCats.add(catsDocuments[index]);
-                });
-              }
+              selectedCat.isFavourite = true;
+
+              service.updateCat(selectedCat, setState);
+              setState(() {
+                loader = false;
+              });
             },
             child: Container(
               height: height / 22,

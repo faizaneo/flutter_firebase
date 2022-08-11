@@ -4,7 +4,6 @@ import 'dart:developer';
 
 import 'package:cat_app/apiclient/firebase/firestore_cats.dart';
 import 'package:cat_app/model/cat_model.dart';
-import 'package:cat_app/screens/cats/cats_preloader.dart';
 import 'package:cat_app/services/firebase_service/firebase_service.dart';
 import 'package:cat_app/services/internet_checker_service/internet_checker_service.dart';
 import 'package:cat_app/services/ui_refresh_service.dart';
@@ -12,6 +11,7 @@ import 'package:cat_app/shared/bottom_navigation/bottom_navigation_bar.dart';
 import 'package:cat_app/shared/consts/consts.dart';
 import 'package:cat_app/widgets/add_remove_button.dart';
 import 'package:cat_app/widgets/cat_list_tile.dart';
+import 'package:cat_app/widgets/shimmer_list_tile.dart';
 import 'package:flutter/material.dart';
 
 class Cats extends StatefulWidget {
@@ -41,26 +41,23 @@ class _CatsState extends State<Cats> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     final ScrollController controller = ScrollController();
     return FutureBuilder(
         future: catsList,
         builder: (BuildContext context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CatsPreLoader();
-          }
-
+          double height = MediaQuery.of(context).size.height;
           List<Cat> featuredCatsDocs = [];
-          featuredCatsMap(featuredCatsDocs, retrievedCatsList);
+          featuredCatsFilter(featuredCatsDocs, retrievedCatsList);
+
           return Scaffold(
               body: RefreshIndicator(
                 onRefresh: () {
                   return refreshPage(setState);
                 },
-                child: SingleChildScrollView(
-                  child: Container(
-                    padding: EdgeInsets.only(left: 24, right: 24, top: 50),
+                child: Container(
+                  height: height - (height / 8.55),
+                  padding: EdgeInsets.only(left: 24, right: 24, top: 50),
+                  child: SingleChildScrollView(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(
                         'Featured',
@@ -70,14 +67,16 @@ class _CatsState extends State<Cats> {
                         ListView.builder(
                             shrinkWrap: true,
                             controller: controller,
-                            itemCount: featuredCatsDocs.length,
+                            itemCount: featuredCatsDocs.isEmpty ? 2 : featuredCatsDocs.length,
                             itemBuilder: ((context, index) {
-                              return CatListTile(
-                                name: featuredCatsDocs[index].name,
-                                description: featuredCatsDocs[index].description,
-                                addRemoveButton:
-                                    AddRemoveButton(index: index, catsDocuments: featuredCatsDocs, setState: setState),
-                              );
+                              return featuredCatsDocs.isEmpty
+                                  ? ShimmerListTile()
+                                  : CatListTile(
+                                      name: featuredCatsDocs[index].name,
+                                      description: featuredCatsDocs[index].description,
+                                      imagePath: featuredCatsDocs[index].imagePath,
+                                      addRemoveButton: AddRemoveButton(selectedCat: featuredCatsDocs[index], setState: setState),
+                                    );
                             })),
                       ] else
                         Text(
@@ -91,14 +90,16 @@ class _CatsState extends State<Cats> {
                       ListView.builder(
                           shrinkWrap: true,
                           controller: controller,
-                          itemCount: retrievedCatsList.length,
+                          itemCount: retrievedCatsList.isEmpty ? 5 : retrievedCatsList.length,
                           itemBuilder: ((context, index) {
-                            return CatListTile(
-                              name: retrievedCatsList[index].name,
-                              description: retrievedCatsList[index].description,
-                              addRemoveButton:
-                                  AddRemoveButton(index: index, catsDocuments: retrievedCatsList, setState: setState),
-                            );
+                            return retrievedCatsList.isEmpty
+                                ? ShimmerListTile()
+                                : CatListTile(
+                                    name: retrievedCatsList[index].name,
+                                    description: retrievedCatsList[index].description,
+                                    imagePath: retrievedCatsList[index].imagePath,
+                                    addRemoveButton: AddRemoveButton(selectedCat: retrievedCatsList[index], setState: setState),
+                                  );
                           }))
                     ]),
                   ),
